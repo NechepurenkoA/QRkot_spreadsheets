@@ -8,6 +8,9 @@ from app.models.charity_project import CharityProject
 from app.schemas.charity_project import CharityProjectCreate, CharityProjectUpdate
 
 
+QUERY_PARAMETER = True
+
+
 class CRUDMeetingRoom(CRUDBase[
     CharityProject,
     CharityProjectCreate,
@@ -27,6 +30,15 @@ class CRUDMeetingRoom(CRUDBase[
         )
         project_id = project_id.first()
         return project_id
+
+    @staticmethod
+    async def get_projects_by_completion_rate(session: AsyncSession):
+        projects = await session.scalars(
+            select(CharityProject).where(
+                CharityProject.fully_invested == QUERY_PARAMETER
+            ).order_by(CharityProject.close_date)
+        )
+        return projects.all()
 
 
 charity_project_crud = CRUDMeetingRoom(CharityProject)
