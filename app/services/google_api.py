@@ -5,6 +5,8 @@ from aiogoogle import Aiogoogle
 from app.core.config import settings
 
 FORMAT = "%Y/%m/%d %H:%M:%S"
+SHEET_TIME_FORMAT = '%d, %H:%M:%S.%f'
+
 
 PERMISSIONS_BODY = {
     'type': 'user',
@@ -13,24 +15,24 @@ PERMISSIONS_BODY = {
 }
 
 SPREADSHEET_BODY = {
-        'properties': {'title': 'Отчет на {}',
-                       'locale': 'ru_RU'},
-        'sheets': [
-            {
-                'properties':
+    'properties': {'title': 'Отчет на {}',
+                   'locale': 'ru_RU'},
+    'sheets': [
+        {
+            'properties':
                 {
-                     'sheetType': 'GRID',
-                     'sheetId': 0,
-                     'title': 'Лист1',
-                     'gridProperties':
-                     {
-                         'rowCount': 100,
-                         'columnCount': 11
-                     }
+                    'sheetType': 'GRID',
+                    'sheetId': 0,
+                    'title': 'Лист1',
+                    'gridProperties':
+                        {
+                            'rowCount': 100,
+                            'columnCount': 11
+                        }
                 }
-            }
-        ]
-    }
+        }
+    ]
+}
 
 
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
@@ -76,11 +78,12 @@ async def spreadsheets_update_value(
     for proj in projects:
         new_row = [
             str(proj['name']),
-            (proj['closed_date'] - proj['created_date']).strftime('%d, %H:%M:%S.%f'),
+            (proj['closed_date'] - proj['created_date']).strftime(
+                SHEET_TIME_FORMAT
+            ),
             str(proj['description'])
         ]
         table_values.append(new_row)
-
     update_body = {
         'majorDimension': 'ROWS',
         'values': table_values
