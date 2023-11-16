@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 
 from aiogoogle import Aiogoogle
@@ -27,17 +28,20 @@ SPREADSHEET_BODY = {
                          'columnCount': 11
                      }
                 }
-             }
+            }
         ]
     }
 
 
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
+    spreadsheet_body = deepcopy(SPREADSHEET_BODY)
     now_date_time = datetime.now().strftime(FORMAT)
-    SPREADSHEET_BODY['properties']['title'].format(now_date_time)
+    spreadsheet_body['properties']['title'] = (
+        spreadsheet_body['properties']['title'].format(now_date_time)
+    )
     service = await wrapper_services.discover('sheets', 'v4')
     response = await wrapper_services.as_service_account(
-        service.spreadsheets.create(json=SPREADSHEET_BODY)
+        service.spreadsheets.create(json=spreadsheet_body)
     )
     spreadsheet_id = response['spreadsheetId']
     return spreadsheet_id
