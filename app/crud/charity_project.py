@@ -36,7 +36,7 @@ class CRUDMeetingRoom(CRUDBase[
         projects = await session.scalars(
             select(CharityProject).where(
                 CharityProject.fully_invested == QUERY_PARAMETER
-            ).order_by(CharityProject.close_date)
+            ).order_by(CharityProject.close_date - CharityProject.create_date)
         )
         return projects.all()
 

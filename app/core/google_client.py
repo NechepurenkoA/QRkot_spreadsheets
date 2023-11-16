@@ -1,3 +1,5 @@
+import os
+
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
 from app.core.config import settings
@@ -25,4 +27,5 @@ cred = ServiceAccountCreds(scopes=SCOPES, **INFO)
 
 async def get_service():
     async with Aiogoogle(service_account_creds=cred) as aiogoogle:
-        yield aiogoogle
+        sheets = await aiogoogle.discover('sheets', 'v4')
+        print(sheets)
